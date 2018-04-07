@@ -1,0 +1,63 @@
+{
+  "88:53:D4:DD:EE:FF": {
+    "org": "HUAWEI TECHNOLOGIES CO.,LTD",
+    "packets": [
+      {
+        "id": [
+          0,
+          1
+        ],
+        "date": "2018/04/07",
+        "time": "08/55/43",
+        "source_ip": "11.22.33.44",
+        "source_port": 1234,
+        "dest_mac": "11:22:33:44:55:66",
+        "dest_ip": "55.66.77.88",
+        "dest_port": 5678,
+        "protocol": "HTTP",
+        "good_packet": 1,
+        "allowed": 1
+      }
+    ]
+  },
+  "88:53:D4:DD:EE:12": {
+    "org": "HUAWEI TECHNOLOGIES CO.,LTD",
+    "packets": [
+      {
+        "id": [
+          2
+        ],
+        "date": "2018/04/07",
+        "time": "08/55/43",
+        "source_ip": "11.22.33.44",
+        "source_port": 1234,
+        "dest_mac": "11:22:33:44:55:66",
+        "dest_ip": "55.66.77.88",
+        "dest_port": 5678,
+        "protocol": "HTTP",
+        "good_packet": 1,
+        "allowed": 1
+      }
+    ]
+  },
+  "88:53:D4:DD:45:FF": {
+    "org": "HUAWEI TECHNOLOGIES CO.,LTD",
+    "packets": [
+      {
+        "id": [
+          3
+        ],
+        "date": "2018/04/07",
+        "time": "08/55/43",
+        "source_ip": "11.22.33.44",
+        "source_port": 1234,
+        "dest_mac": "11:22:33:44:55:66",
+        "dest_ip": "55.66.77.88",
+        "dest_port": 5678,
+        "protocol": "HTTP",
+        "good_packet": 1,
+        "allowed": 1
+      }
+    ]
+  }
+}
