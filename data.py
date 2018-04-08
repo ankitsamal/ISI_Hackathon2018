@@ -17,6 +17,8 @@ import pandas as pd
 import json
 from IPy import IP
 import requests
+import re
+import urllib.parse as urlparse
 
 class MacParser:
 	def __init__(self, filename):
@@ -62,7 +64,7 @@ class RuleList:
 
 class PacketData:
 	macParser = MacParser("oui.csv")
-	def __init__(self, date, time, source_mac, source_ip, source_port, dest_mac, dest_ip, dest_port, protocol, good_packet, allowed):	
+	def __init__(self, date, time, source_mac, source_ip, source_port, dest_mac, dest_ip, dest_port, protocol, good_packet, allowed, content):	
 		self.date = date
 		self.time = time
 		self.source_mac = source_mac
@@ -75,6 +77,22 @@ class PacketData:
 		self.good_packet = good_packet
 		self.allowed = allowed
 		self.source_org = PacketData.macParser.parse(self.source_mac)
+		self.host = ""
+		self.serialNumber = ""
+		self.token = ""
+		self.model = ""
+		if protocol == 'DNS':
+			rst = re.match(r'Standard query 0x\d\d\d\d A ([\w.]+)$', content)
+			if rst != None:
+				self.host = rst.groups()[0]
+		elif protocol == 'HTTP':
+			rst = re.match(r'^GET ([\w/?=%&]+) HTTP/\d.\d', content)
+			if rst != None:
+				d = urlparse.parse_qs(urlparse.urlparse(rst.groups()[0]).query)
+				self.serialNumber = d.get("serialNumber", ("",))[0]
+				self.token = d.get("token", ("",))[0]
+				self.model = d.get("model", ("",))[0]
+
 
 def CSV2ListAndDict(filename):
 	'''
@@ -82,13 +100,13 @@ def CSV2ListAndDict(filename):
 	{'date': datetime.date(2018, 4, 7), 'time': datetime.time(8, 55, 43), 'source_mac': ['AA', 'BB', 'CC', 'DD', 'EE', 'FF'], 'source_ip': ['11', '22', '33', '44'], 'source_port': 1234, 'dest_mac': ['11', '22', '33', '44', '55', '66'], 'dest_ip': ['55', '66', '77', '88'], 'dest_port': 5678, 'protocol': 'HTTP', 'good_packet': 1, 'allowed': 1}
 	'''
 	train_set = np.loadtxt(filename, skiprows=1, delimiter=",", dtype="str")
-	train_set.reshape((-1, 11))
+	# train_set.reshape((-1, 11))
 	datas = []
 	for line in train_set:
 		packetData = PacketData(parser.parse(line[0]).date(), parser.parse(line[1]).time(), \
 			line[2], line[3], int(line[4]) if len(line[4]) != 0 else -1,\
 			line[5], line[6], int(line[7]) if len(line[7]) != 0 else -1,\
-			line[8], int(line[9]), int(line[10])\
+			line[8], int(line[9]), int(line[10]), line[11]\
 			)
 		datas.append(packetData)
 	d = {}
@@ -108,8 +126,11 @@ def List2JSON(datas):
 	groups = {}
 	for index in range(0, len(datas)):
 		data = datas[index] 
-		groups[data.source_mac] = groups.get(data.source_mac, {"org": data.source_org, "packets": []})
+		groups[data.source_mac] = groups.get(data.source_mac, {"org": data.source_org, "host":[], "packets": [], "token": [], "serialNumber": [], "model": []})
 		added = False
+		for keyword in ["token", "serialNumber", "model", "host"]:
+			if len(data.__dict__[keyword]) != 0 and data.__dict__[keyword] not in groups[data.source_mac][keyword]:
+				groups[data.source_mac][keyword].append(data.__dict__[keyword])
 		for old_packet in groups[data.source_mac]["packets"]:
 			if old_packet["source_ip"] == data.source_ip and old_packet["source_port"] == data.source_port and \
 					old_packet["dest_mac"] == data.dest_mac and old_packet["dest_ip"] == data.dest_ip and \
@@ -129,8 +150,8 @@ def List2JSON(datas):
 					"dest_ip": data.dest_ip, \
 					"dest_port": str(data.dest_port) if data.dest_port >= 0 else "", \
 					"protocol": data.protocol, \
-					"good_packet": data.good_packet,
-					"allowed": data.allowed
+					"good_packet": data.good_packet,\
+					"allowed": data.allowed\
 				})
 	return json.dumps(groups)
 
