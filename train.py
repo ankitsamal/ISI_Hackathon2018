@@ -13,8 +13,22 @@ Allowed = 1, Blocked = 0
 '''
 
 import numpy as np
-from data import loadCSV, MacParser, toJSON
+from data import CSV2ListAndDict, RuleList, tagList, List2CSV
 
-data = CSV2List("train.csv")
-# print(list(map(lambda x: x.__dict__, data)))
-print(List2JSON(data))
+# datas, rules = CSV2ListAndDict("train.csv")
+# print(list(map(lambda x: x.__dict__, datas)))
+# print(rules[datas[0].source_mac].__dict__)
+
+# rules[datas[0].source_mac].white_list.append((ip, None, None))
+# rules[datas[0].source_mac].query(ip, port, protocol)
+# print(List2JSON(data))
+
+# rl = RuleList()
+# rl.white_list.append(('1.2.3.4', 100, 'HTTPS'))
+# print(rl.query('1.2.3.4', 90, 'HTTPS'))
+# print(rl.query('1.2.3.4', 80, 'HTTPS'))
+# print(rl.query('1.2.3.4', 100, 'HTTP'))
+
+datas, rules = CSV2ListAndDict("train.csv")
+tagList(datas, rules)
+List2CSV(datas, "output.csv")
