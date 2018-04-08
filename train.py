@@ -13,7 +13,7 @@ Allowed = 1, Blocked = 0
 '''
 
 import numpy as np
-from data import CSV2ListAndDict, RuleList, tagList, List2CSV
+from data import CSV2ListAndDict, RuleList, tagList, List2CSV, List2JSON, postJSON
 
 # datas, rules = CSV2ListAndDict("train.csv")
 # print(list(map(lambda x: x.__dict__, datas)))
@@ -29,6 +29,10 @@ from data import CSV2ListAndDict, RuleList, tagList, List2CSV
 # print(rl.query('1.2.3.4', 80, 'HTTPS'))
 # print(rl.query('1.2.3.4', 100, 'HTTP'))
 
-datas, rules = CSV2ListAndDict("train.csv")
+datas, rules = CSV2ListAndDict("featureCapture.csv")
 tagList(datas, rules)
-List2CSV(datas, "output.csv")
+jsonFile = List2JSON(datas)
+postJSON(jsonFile)
+List2CSV(datas, "featureCapture.csv", "output.csv")
+# tagList(datas, rules)
+# List2CSV(datas, "output.csv")
