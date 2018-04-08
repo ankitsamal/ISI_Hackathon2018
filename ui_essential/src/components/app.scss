@@ -1,0 +1,28 @@
+.app {
+  height: 100%;
+  color: lighten(black, 10%);
+  background: white;
+  user-select: none;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+}
+
+.devices {
+  height: -webkit-fill-available;
+  width: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  margin: 1rem;
+  box-shadow: 0 0 1rem lighten(black, 80%);
+  align-items: center;
+  &:hover {
+    box-shadow: 0 0 1rem lighten(black, 85%);
+  }
+  .title {
+    margin: 0.5rem;
+    font-size: 1.5rem;
+    color: teal;
+  }
+}
